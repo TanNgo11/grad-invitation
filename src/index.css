@@ -1,0 +1,822 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #040712;
+}
+
+/* ---------------------------------------------------------------- map */
+
+.map {
+  position: fixed;
+  inset: 0;
+}
+
+.map-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  z-index: 100000;
+  background: #04071252;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: mapLoadingFade 0.4s ease both;
+}
+
+.map-loading__spinner {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #ff3b3b;
+  animation: mapLoadingSpin 0.9s linear infinite;
+}
+
+.map-loading p {
+  margin: 0 0 -8px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.map-loading__bar {
+  width: min(240px, 60vw);
+  height: 4px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.map-loading__error {
+  max-width: min(420px, 80vw);
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #ffb4a2 !important;
+  text-align: center;
+  word-break: break-word;
+}
+
+.map-loading__bar span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff4d2d, #ffd8c8);
+  transition: width 0.2s ease;
+}
+
+@keyframes mapLoadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mapLoadingFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------------- marker */
+
+.marker-bounce {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  animation: markerBounce 1.8s ease infinite;
+}
+
+.marker-pin {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #ff6b6b, #ff3b3b);
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 8px 18px #ff3b3b66, inset 0 2px 3px #ffffff59;
+}
+
+.marker-pin::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: 9px;
+  top: 9px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.marker-pulse {
+  position: absolute;
+  left: 50%;
+  bottom: -18px;
+  width: 42px;
+  height: 14px;
+  transform: translate(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #ff505073, #ff505038 45%, #ff505000);
+  z-index: -2;
+  animation: groundPulse 2s ease-out infinite;
+}
+
+@keyframes markerBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(-12px);
+  }
+  40% {
+    transform: translateY(0);
+  }
+  55% {
+    transform: translateY(-6px);
+  }
+  70% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes groundPulse {
+  0% {
+    transform: translate(-50%) scale(0.7);
+    opacity: 0.8;
+  }
+  70%,
+  100% {
+    transform: translate(-50%) scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------- race / hud */
+
+.car-trail {
+  position: fixed;
+  width: 80px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #ff3b3b);
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: 200;
+  animation: rainbowTrail 2s linear infinite;
+}
+
+@keyframes rainbowTrail {
+  0% {
+    filter: blur(8px) hue-rotate(0deg);
+  }
+  100% {
+    filter: blur(8px) hue-rotate(360deg);
+  }
+}
+
+.race-tutorial,
+.game-over {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 99999;
+  background: radial-gradient(circle at 50% 58%, rgba(255, 79, 45, 0.22), transparent 30%), #0407128f;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #fff;
+  text-align: center;
+  padding: 24px;
+}
+
+.race-tutorial__eyebrow,
+.game-over__eyebrow {
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: #ffffff1a;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.race-tutorial h2,
+.game-over h2 {
+  margin: 0;
+  font-size: clamp(34px, 6vw, 64px);
+  line-height: 1;
+}
+
+.race-tutorial p,
+.game-over p {
+  max-width: 440px;
+  margin: 0 0 8px;
+  font-size: 17px;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+.race-tutorial button,
+.launch-button,
+.game-over button {
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #0f172a;
+  background: linear-gradient(180deg, #fff, #ffd8c8);
+  box-shadow: 0 18px 44px #ff4f2d57, inset 0 1px 1px #ffffffe6;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.race-tutorial button,
+.game-over button {
+  padding: 15px 34px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.race-tutorial button:hover,
+.game-over button:hover {
+  transform: translateY(-2px);
+}
+
+.race-tutorial button:active,
+.game-over button:active {
+  transform: scale(0.96);
+}
+
+.launch-button {
+  position: fixed;
+  left: 50%;
+  bottom: 112px;
+  z-index: 999;
+  min-width: 126px;
+  height: 58px;
+  padding: 0 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transform: translate(-50%);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.launch-button span {
+  display: block;
+  white-space: nowrap;
+}
+
+.launch-button:hover {
+  transform: translate(-50%) translateY(-3px);
+}
+
+.launch-button:active,
+.launch-button.is-boosting {
+  transform: translate(-50%) scale(0.94);
+  box-shadow: 0 8px 26px #ff4f2d73, inset 0 3px 8px #74240e33;
+}
+
+.countdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 120px;
+  font-weight: 700;
+  color: #fff;
+  background: #04071247;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 99999;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.countdown-overlay span {
+  animation: countdownPop 1s ease both;
+}
+
+@keyframes countdownPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.72);
+  }
+  20%,
+  78% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+.recenter-button {
+  position: fixed;
+  right: 28px;
+  bottom: 32px;
+  width: 58px;
+  height: 58px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  background: #ffffff26;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 35px #0003, inset 0 1px 1px #fff3;
+  transition: all 0.25s ease;
+  z-index: 999;
+}
+
+.recenter-button:hover {
+  transform: translateY(-4px) scale(1.08);
+  background: #ffffff38;
+}
+
+.recenter-button:active {
+  transform: scale(0.95);
+}
+
+/* -------------------------------------------------- destination popup */
+
+.destination-popup {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translate(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 22px;
+  border-radius: 24px;
+  background: #ffffff2e;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px #00000040;
+  z-index: 999;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.mobile-popup {
+  animation: destinationPopup 1.5s ease forwards;
+}
+
+@keyframes destinationPopup {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 40px) scale(0.8);
+  }
+  15%,
+  75% {
+    opacity: 1;
+    transform: translate(-50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -15px) scale(0.95);
+  }
+}
+
+.destination-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff26;
+  font-size: 1.5rem;
+}
+
+.destination-title {
+  font-size: 1rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #1e293b, #334155, #475569);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ----------------------------------------------------- invitation card */
+
+.invitation-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 8vw;
+  pointer-events: none;
+}
+
+.invitation-card {
+  /* Mọi kích thước bám theo chiều cao viewport (dvh) để thiệp luôn lọt màn
+     hình — không phải scroll mới thấy nút Get Directions. */
+  --pad: clamp(18px, 3.2dvh, 40px);
+  --gap: clamp(10px, 2.2dvh, 26px);
+
+  width: min(420px, 92vw);
+  padding: var(--pad);
+  border-radius: clamp(24px, 4dvh, 40px);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  background: #1e293b40;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 60px #0006, inset 0 1px 1px #ffffff4d;
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.invitation-card::-webkit-scrollbar {
+  width: 0;
+}
+
+.avatar {
+  width: clamp(72px, 17dvh, 160px);
+  height: clamp(72px, 17dvh, 160px);
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+  margin: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.invitation-card h1 {
+  margin: clamp(8px, 1.8dvh, 20px) 0 0;
+  font-size: clamp(1.25rem, 3.4dvh, 2rem);
+  line-height: 1.15;
+}
+
+.invitation-card h1,
+.invitation-card h2,
+.invitation-card h3,
+.invitation-card p {
+  text-align: center;
+  width: 100%;
+}
+
+.invitation-card h3 {
+  margin: 0 0 clamp(6px, 1.2dvh, 12px);
+  font-size: clamp(1rem, 2.4dvh, 1.4rem);
+}
+
+.invitation-card p {
+  margin: clamp(3px, 0.7dvh, 8px) 0;
+  font-size: clamp(0.8rem, 1.9dvh, 1rem);
+  line-height: 1.35;
+  opacity: 0.9;
+}
+
+.degree {
+  font-size: clamp(0.78rem, 1.8dvh, 0.98rem);
+}
+
+.university {
+  margin: clamp(6px, 1.2dvh, 10px) 0 4px;
+  font-size: clamp(0.66rem, 1.6dvh, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #ffffffb3;
+}
+
+.invite-text {
+  margin: 0 0 clamp(8px, 1.6dvh, 18px);
+  font-size: clamp(0.68rem, 1.5dvh, 0.85rem);
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #ffffffb3;
+}
+
+.divider {
+  margin: var(--gap) 0;
+  width: 100%;
+  height: 1px;
+  background: #fff3;
+}
+
+/* ------------------------------------------------------ countdown grid */
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: clamp(6px, 1.2dvh, 12px);
+  margin: var(--gap) 0 0;
+}
+
+.count-item {
+  width: clamp(48px, 8.4dvh, 70px);
+  height: clamp(48px, 8.4dvh, 70px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: clamp(12px, 2.2dvh, 18px);
+  background: #ffffff14;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.count-item strong {
+  font-size: clamp(0.95rem, 2.1dvh, 1.2rem);
+}
+
+.count-item span {
+  margin-top: 3px;
+  font-size: clamp(0.55rem, 1.2dvh, 0.7rem);
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------------- cta button */
+
+.glass-button {
+  width: 100%;
+  margin-top: var(--gap);
+  padding: clamp(10px, 1.9dvh, 15px);
+  font-size: clamp(0.82rem, 1.9dvh, 1rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border: none;
+  border-radius: 999px;
+  background: #ffffff26;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  transition: 0.2s;
+}
+
+.button-icon-wrapper {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffffff1f;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 2px #ffffff4d, 0 2px 8px #0003;
+}
+
+.button-icon {
+  font-size: 16px;
+}
+
+.glass-button .button-icon-wrapper,
+.glass-button span {
+  position: relative;
+  z-index: 1;
+}
+
+.invitation-card.is-ready .glass-button {
+  opacity: 1;
+  transform: none;
+  position: relative;
+  overflow: hidden;
+  animation: buttonPulse 2.6s ease-in-out infinite;
+}
+
+.invitation-card.is-ready .glass-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.5) 50%, transparent 80%);
+  transform: translate(-160%) skew(-18deg);
+  animation: buttonShine 3.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.invitation-card.is-ready .glass-button:hover {
+  transform: translateY(-2px);
+  animation-play-state: paused;
+}
+
+@keyframes buttonPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 #ffffff4d, 0 6px 18px #0000002e;
+  }
+  50% {
+    box-shadow: 0 0 0 7px #fff0, 0 12px 28px #00000047;
+  }
+}
+
+@keyframes buttonShine {
+  0% {
+    transform: translate(-160%) skew(-18deg);
+  }
+  40%,
+  100% {
+    transform: translate(320%) skew(-18deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invitation-card.is-ready .glass-button {
+    animation: none;
+  }
+  .invitation-card.is-ready .glass-button::before {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------- footer */
+
+.footer {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translate(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: #ffffff14;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 8px 30px #0000002e, inset 0 1px 1px #fff3;
+  z-index: 100;
+}
+
+.footer-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: linear-gradient(90deg, #334155, #475569, #64748b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+  animation: logo-breathe 2.2s ease-in-out infinite;
+}
+
+@keyframes logo-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+
+/* ------------------------------------------------------- laptop nhỏ */
+
+@media (max-width: 1440px) and (min-width: 769px) {
+  .invitation-wrapper {
+    padding-left: 5vw;
+  }
+  .invitation-card {
+    width: min(370px, 40vw);
+  }
+}
+
+/* ------------------------------------------------------------- mobile */
+
+@media (max-width: 768px) {
+  .recenter-button {
+    display: none;
+  }
+
+  .destination-popup {
+    bottom: 115px;
+    width: calc(100vw - 32px);
+    max-width: 320px;
+    padding: 14px 18px;
+    gap: 12px;
+    border-radius: 20px;
+  }
+  .destination-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .destination-title {
+    font-size: 0.95rem;
+  }
+
+  .race-tutorial,
+  .game-over {
+    padding: 24px 20px;
+  }
+  .race-tutorial h2,
+  .game-over h2 {
+    font-size: 38px;
+  }
+  .race-tutorial p,
+  .game-over p {
+    max-width: 320px;
+    font-size: 15px;
+  }
+  .race-tutorial button,
+  .game-over button {
+    width: min(100%, 280px);
+  }
+  .launch-button {
+    bottom: 96px;
+    width: calc(100vw - 40px);
+    max-width: 320px;
+    height: 60px;
+    font-size: 14px;
+  }
+
+  .invitation-wrapper {
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+  }
+  .invitation-card {
+    width: 100%;
+    max-width: 390px;
+  }
+
+  .footer {
+    bottom: calc(env(safe-area-inset-bottom) + 16px);
+    padding: 10px 18px;
+    gap: 8px;
+    max-width: calc(100vw - 140px);
+    white-space: nowrap;
+  }
+  .footer-text {
+    font-size: 0.72rem;
+  }
+  .footer-logo {
+    width: 22px;
+    height: 22px;
+  }
+}

@@ -310,7 +310,7 @@ export default function MapScene({ onArrived }) {
         <div className={`destination-popup ${isMobile ? 'mobile-popup' : ''}`}>
           <div className="destination-icon">🎊</div>
           <div>
-            <div className="destination-title">... hên thôi ní</div>
+            <div className="destination-title">đi nhớ đem quà</div>
           </div>
         </div>
       )}
